@@ -1,0 +1,87 @@
+﻿' iMacro for automazing Sozialversicherung Meldungen
+' You can execute this iMacro when you are logged in at https://www.gkvnet-ag.de/svnet-online/scripts/home.asp
+' 
+' Set Filename and number of columns (must be accurate!):
+
+SET !DATASOURCE svnet_new_employee.csv
+SET !DATASOURCE_COLUMNS 54
+SET !LOOP 3
+'Start (LOOP) at line 3 to skip the header in the file
+
+' COL1 = Versicherungsnummer
+' COL2 = Personalnummer (freiwillige Angabe)
+' COL3 = Name
+' COL4 = Vorname
+' COL5 = Vorsatz
+' COL6 = Zusatz
+' COL7 = Titel
+' COL8 = Straße und Hausnummer (nur bei Anmeldung und Aenderung)
+' COL9 = Land
+' COL10 = Postleitzahl
+' COL11 = Wohnort
+' COL12 = Beschäftigungszeit von
+' COL13 = Betriebsnummer des Arbeitsgeber
+' COL14 = Personengruppe
+' COL15 = Mehrfachbeschäftigung
+' COL16 = Betriebstätte ("O" fuer Ost, "W" fuer West)
+' COL17 = KV
+' COL18 = RV
+' COL19 = ALV
+' COL20 = PV
+' COL21 = Taetigkeitsschluessel
+' COL22 = Schulabschluss
+' COL23 = Berufsausbildung
+' COL24 = AUEG
+' COL25 = Vertragsform
+' COL26 = Schluessel der Staatsangehoerigkeit (VAR1)
+' COL27 = Statuskennzeichen
+' COL28 = Betriebsnummer der Krankenkasse (Geschäftsstelle)
+' COL29 = Firma (1)
+' COL30 = Firma (2)
+' COL31 = Strasse und Hausnummer der Firma
+' COL32 = PLZ der Firma
+' COL33 = Ort der Firma
+
+' some csv editors may save the Staatsangehoerigkeit only as "0", but it has to be "000".
+SET !VAR1 EVAL("var s=\"{{!COL26}}\"; if(s==\"0\") \"000\"; else s;")
+
+' Start the program
+VERSION BUILD=7401110 RECORDER=FX
+FRAME F=1
+TAG POS=1 TYPE=A ATTR=TXT:SV-Meldung
+FRAME F=2
+TAG POS=1 TYPE=A ATTR=TXT:Allgemein<SP>(inkl.<SP>Geringfügig<SP>Beschäftigte)
+TAG POS=1 TYPE=A ATTR=TXT:Anmeldung
+TAG POS=1 TYPE=A ATTR=TXT:10<SP>Beginn<SP>der<SP>Beschäftigung
+FRAME F=2
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:frmSVMain ATTR=NAME:txtsvversnum1 CONTENT={{!COL1}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:frmSVMain ATTR=NAME:txtsvname CONTENT={{!COL3}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:frmSVMain ATTR=NAME:txtsvvorname CONTENT={{!COL4}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:frmSVMain ATTR=NAME:txtsvstrasse CONTENT={{!COL8}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:frmSVMain ATTR=NAME:txtsvland CONTENT={{!COL9}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:frmSVMain ATTR=NAME:txtsvplz CONTENT={{!COL10}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:frmSVMain ATTR=NAME:txtsvort CONTENT={{!COL11}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:frmSVMain ATTR=NAME:txtsvvon CONTENT={{!COL12}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:frmSVMain ATTR=tabindex:18 CONTENT={{!COL13}}
+TAG POS=1 TYPE=SELECT FORM=NAME:frmSVMain ATTR=NAME:cbosvPG CONTENT=%{{!COL14}} 
+TAG POS=1 TYPE=INPUT:RADIO FORM=ID:frmSVMain ATTR=NAME:chksvostwest&&VALUE:{{!COL16}}
+TAG POS=1 TYPE=SELECT FORM=NAME:frmSVMain ATTR=NAME:cbosvkvgruppe CONTENT=%{{!COL17}}
+TAG POS=1 TYPE=SELECT FORM=NAME:frmSVMain ATTR=NAME:cbosvrvgruppe CONTENT=%{{!COL18}}
+TAG POS=1 TYPE=SELECT FORM=NAME:frmSVMain ATTR=NAME:cbosvalvgruppe CONTENT=%{{!COL19}}
+TAG POS=1 TYPE=SELECT FORM=NAME:frmSVMain ATTR=NAME:cbosvpvgruppe CONTENT=%{{!COL20}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:frmSVMain ATTR=tabindex:33 CONTENT={{!COL21}}
+TAG POS=1 TYPE=SELECT FORM=NAME:frmSVMain ATTR=NAME:cboSchul CONTENT=%{{!COL22}}
+TAG POS=1 TYPE=SELECT FORM=NAME:frmSVMain ATTR=NAME:cboBeruf CONTENT=%{{!COL23}}
+TAG POS=1 TYPE=SELECT FORM=NAME:frmSVMain ATTR=NAME:cboAUEG CONTENT=%{{!COL24}}
+TAG POS=1 TYPE=SELECT FORM=NAME:frmSVMain ATTR=NAME:cboVertrag CONTENT=%{{!COL25}}
+TAG POS=1 TYPE=SELECT FORM=NAME:frmSVMain ATTR=NAME:cbosvstaat CONTENT=%{{!VAR1}}
+TAG POS=1 TYPE=SELECT FORM=NAME:frmSVMain ATTR=NAME:cbostatusknz CONTENT=%{{!COL27}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:frmSVMain ATTR=NAME:txtsveinzugstelle CONTENT={{!COL28}}
+
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:frmSVMain ATTR=tabindex:78 CONTENT={{!COL29}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:frmSVMain ATTR=NAME:txtsvfirma2 CONTENT={{!COL30}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:frmSVMain ATTR=NAME:txtsveinzugstrasse1 CONTENT={{!COL31}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:frmSVMain ATTR=NAME:txtsveinzugplz CONTENT={{!COL32}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:frmSVMain ATTR=NAME:txtsveinzugort CONTENT={{!COL33}}
+
+TAG POS=1 TYPE=INPUT:SUBMIT FORM=ID:frmSVMain ATTR=NAME:submitAbsenden&&VALUE:SV-Meldung<SP>prüfen

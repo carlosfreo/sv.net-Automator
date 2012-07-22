@@ -1,0 +1,111 @@
+﻿' iMacro for automazing Sozialversicherung Meldungen
+' You can execute this iMacro when you are logged in at https://www.gkvnet-ag.de/svnet-online/scripts/home.asp
+' 
+' Set Filename and number of columns (must be accurate!):
+
+SET !DATASOURCE svnet_new_employee.csv
+SET !DATASOURCE_COLUMNS 54
+SET !LOOP 3
+'Start (LOOP) at line 3 to skip the header in the file
+
+' COL1 = Versicherungsnummer
+' COL2 = Personalnummer (freiwillige Angabe)
+' COL3 = Name
+' COL4 = Vorname
+' COL5 = Vorsatz
+' COL6 = Zusatz
+' COL7 = Titel
+' COL8 = Straße und Hausnummer (nur bei Anmeldung und Aenderung)
+' COL9 = Land
+' COL10 = Postleitzahl
+' COL11 = Wohnort
+' COL12 = Beschäftigungszeit von
+' COL13 = Betriebsnummer des Arbeitsgeber
+' COL14 = Personengruppe
+' COL15 = Mehrfachbeschäftigung
+' COL16 = Betriebstätte ("O" fuer Ost, "W" fuer West)
+' COL17 = KV
+' COL18 = RV
+' COL19 = ALV
+' COL20 = PV
+' COL21 = Taetigkeitsschluessel
+' COL22 = Schulabschluss
+' COL23 = Berufsausbildung
+' COL24 = AUEG
+' COL25 = Vertragsform
+' COL26 = Schluessel der Staatsangehoerigkeit (VAR1)
+' COL27 = Statuskennzeichen
+' COL28 = Betriebsnummer der Krankenkasse (Geschäftsstelle)
+' COL29 = Firma (1)
+' COL30 = Firma (2)
+' COL31 = Strasse und Hausnummer der Firma
+' COL32 = PLZ der Firma
+' COL33 = Ort der Firma
+
+' COL34 = ___empty___
+' COL35 = ___ Start des Beitragsnachweis ___
+' COL36 = KV allgemeiner Beitrag
+' COL37 = KV allgemeiner Beitrag ohne Sozialausgleich
+' COL38 = KV erhoehter Beitrag
+' COL39 = KV ermaeßigter Beitrag
+' COL40 = KV ermaeßigter Beitrag ohne Sozialausgleich
+' COL41 = KV geringfuegig Beschaeftigte
+' COL42 = Rentenversicherung voller Beitrag
+' COL43 = Rentenversicherung halber Beitrag 
+' COL44 = Rentenversicherung geringfuegig Beschaeftigte
+' COL45 = Arbeitsfoerderung voller Beitrag
+' COL46 = Arbeitsfoerderung halber Beitrag
+' COL47 = Pflegeversicherung
+' COL48 = Umlage U1
+' COL49 = Umlage U2
+' COL50 = Insolvenzgeldumlage
+' COL51 = freiwillig Krankenversicherte
+' COL52 = freiwillig Krankenversicherte ohne Sozialausgleich
+' COL53 = freiwillig Krankenversicherte zur Pflegeversicherung
+' COL54 = Abzueglich Erstattung U1 / U2
+
+
+' get the last date of the month
+SET !VAR1 EVAL("var strBegin=\"{{!COL12}}\"; var firstDotInd = strBegin.indexOf(\".\"); var lastDotInd = strBegin.lastIndexOf(\".\"); var strMonth = strBegin.substring(firstDotInd+1, lastDotInd); var strYear = strBegin.substring(lastDotInd+1, strBegin.length); var d = new Date(strYear, strMonth, 0); var last_day = d.getDate(); var m = d.getMonth()+1; last_day+\".\"+(m<=9?'0'+m:m)+\".\"+strYear")
+
+
+VERSION BUILD=7401110 RECORDER=FX
+FRAME F=1
+TAG POS=1 TYPE=A ATTR=TXT:Beitragsnachweis
+FRAME F=2
+TAG POS=1 TYPE=A ATTR=TXT:Allgemein
+FRAME F=2
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=tabindex:2 CONTENT={{!COL13}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=tabindex:4 CONTENT={{!COL29}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbnarbeitgebername2 CONTENT={{!COL30}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbnarbeitgeberstrasse CONTENT={{!COL31}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbnarbeitgeberland CONTENT=
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbnarbeitgeberplz CONTENT={{!COL32}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbnarbeitgeberort CONTENT={{!COL33}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbnvon CONTENT={{!COL12}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbnbis CONTENT={{!VAR1}}
+TAG POS=1 TYPE=INPUT:RADIO FORM=NAME:BNCheck ATTR=NAME:chkbnostwest&&VALUE:{{!COL16}}
+TAG POS=1 TYPE=INPUT:RADIO FORM=NAME:BNCheck ATTR=NAME:chkbndauernachweis&&VALUE:D
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbneinzugstelle CONTENT={{!COL28}}
+
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbn1000 CONTENT={{!COL36}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtBG1000Soz CONTENT={{!COL37}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbn2000 CONTENT={{!COL38}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbn3000 CONTENT={{!COL39}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtBG3000Soz CONTENT={{!COL40}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbn6000 CONTENT={{!COL41}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbn0100 CONTENT={{!COL42}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbn0300 CONTENT={{!COL43}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbn0500 CONTENT={{!COL44}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbn0010 CONTENT={{!COL45}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbn0020 CONTENT={{!COL46}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbn0001 CONTENT={{!COL47}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbnU1 CONTENT={{!COL48}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbnU2 CONTENT={{!COL49}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbn0050 CONTENT={{!COL50}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbnfreikasse CONTENT={{!COL51}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtBGKVSoz CONTENT={{!COL52}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbnfreipflege CONTENT={{!COL53}}
+TAG POS=1 TYPE=INPUT:TEXT FORM=NAME:BNCheck ATTR=NAME:txtbnabzugLFZG CONTENT={{!COL54}}
+
+TAG POS=1 TYPE=INPUT:SUBMIT FORM=ACTION:basbncheck.asp ATTR=NAME:submitWeiter&&VALUE:Weiter
